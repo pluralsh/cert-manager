@@ -322,15 +322,6 @@ func lookupNameservers(fqdn string, nameservers []string) ([]string, error) {
 // FindZoneByFqdn determines the zone apex for the given fqdn by recursing up the
 // domain labels until the nameserver returns a SOA record in the answer section.
 func FindZoneByFqdn(fqdn string, nameservers []string) (string, error) {
-	fqdnToZoneLock.RLock()
-	// Do we have it cached?
-	if zone, ok := fqdnToZone[fqdn]; ok {
-		fqdnToZoneLock.RUnlock()
-		logf.V(logf.DebugLevel).Infof("Returning cached zone record %q for fqdn %q", zone, fqdn)
-		return zone, nil
-	}
-	fqdnToZoneLock.RUnlock()
-
 	labelIndexes := dns.Split(fqdn)
 
 	// We are climbing up the domain tree, looking for the SOA record on
