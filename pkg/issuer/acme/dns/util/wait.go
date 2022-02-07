@@ -12,7 +12,6 @@ import (
 	"fmt"
 	"net"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/miekg/dns"
@@ -31,9 +30,6 @@ var (
 
 	// dnsQuery is used to be able to mock DNSQuery
 	dnsQuery dnsQueryFunc = DNSQuery
-
-	fqdnToZoneLock sync.RWMutex
-	fqdnToZone     = map[string]string{}
 )
 
 const defaultResolvConf = "/etc/resolv.conf"
@@ -366,11 +362,7 @@ func FindZoneByFqdn(fqdn string, nameservers []string) (string, error) {
 
 		for _, ans := range in.Answer {
 			if soa, ok := ans.(*dns.SOA); ok {
-				fqdnToZoneLock.Lock()
-				defer fqdnToZoneLock.Unlock()
-
 				zone := soa.Hdr.Name
-				fqdnToZone[fqdn] = zone
 				logf.V(logf.DebugLevel).Infof("Returning discovered zone record %q for fqdn %q", zone, fqdn)
 				return zone, nil
 			}
