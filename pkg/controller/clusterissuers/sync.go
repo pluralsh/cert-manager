@@ -42,7 +42,7 @@ func (c *controller) Sync(ctx context.Context, iss *cmapi.ClusterIssuer) (err er
 	log := logf.FromContext(ctx)
 
 	// allow a maximum of 10s
-	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
+	ctx, cancel := context.WithTimeout(ctx, time.Second*120)
 	defer cancel()
 
 	issuerCopy := iss.DeepCopy()
